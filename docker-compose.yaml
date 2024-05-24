@@ -2,10 +2,10 @@ name: cinema
 services:
 
   backend_server:
-    container_name: app_backend
+    container_name: backend
     build: ./backend
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
     environment:
       - PORT=8000
       - POSTGRES_DB=${POSTGRES_DB}
@@ -19,8 +19,21 @@ services:
     depends_on:
       - postgres_server
 
+  frontend_server:
+    container_name: frontend
+    build: ./frontend
+    volumes:
+    - ./frontend:/app/frontend
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+    restart: always
+    depends_on:
+      - backend_server
+
   postgres_server:
-    container_name: app_db
+    container_name: db
     image: pgvector/pgvector:pg16
     restart: always
     ports:
